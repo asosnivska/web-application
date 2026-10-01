@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Slae.Application/Slae.Application.csproj" />
+    <Project Path="Slae.Domain/Slae.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Slae.Persistence/Slae.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Slae.WebApi/Slae.WebApi.csproj" Id="c0e9b2a3-8f97-496f-b3d3-122c3aeaa67f" />
+  </Folder>
+</Solution>
