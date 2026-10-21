@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Slae.Application\Slae.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
