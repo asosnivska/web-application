@@ -79,6 +79,7 @@ namespace Slae.Persistence.Services
                     .SetProperty(t => t.Status, SlaeTaskStatus.Canceled)
                     .SetProperty(t => t.IsCanceled, true)
                     .SetProperty(t => t.CompletedAt, now), ct);
+
             if (changed == 1)
             {
                 return CancelResult.CanceledImmediately;
@@ -87,6 +88,7 @@ namespace Slae.Persistence.Services
             changed = await _db.Tasks
                 .Where(t => t.Id == taskId && t.UserId == userId && t.Status == SlaeTaskStatus.InProgress)
                 .ExecuteUpdateAsync(s => s.SetProperty(t => t.IsCanceled, true), ct);
+
             if (changed == 1) 
             {
                 return CancelResult.CancelRequested;
