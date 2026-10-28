@@ -136,8 +136,6 @@ namespace Slae.Persistence.Services
 
         public async Task<int> RecoverStaleAsync(TimeSpan staleAfter, int maxAttempts, CancellationToken ct)
         {
-            const string staleCondition = "\"Status\" = {0} AND \"WorkerLastReportedAt\" < now() - @stale";
-
             string canceledSql = $$"""
             UPDATE "SlaeTasks" SET "Status" = {{Canceled}}, "CompletedAt" = now()
             WHERE "Status" = {{InProgress}} AND "WorkerLastReportedAt" < now() - @stale AND "IsCanceled";
