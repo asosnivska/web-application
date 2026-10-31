@@ -23,17 +23,22 @@ namespace Slae.Persistence.Services
             await _db.Database.ExecuteSqlInterpolatedAsync(
                 $"SELECT pg_advisory_xact_lock(hashtext({userId.ToString()}))", ct);
 
-            if (!await _db.Users.AnyAsync(u => u.Id == userId, ct))
+            int? userLimit = await _db.Users
+                .Where(u => u.Id == userId)
+                .Select(u => (int?)u.MaxConcurrentTasks)
+                .FirstOrDefaultAsync(ct);
+
+            if (userLimit is null)
             {
-                return new CreateTaskResult(CreateStatus.UserNotFound, null, 0, TaskLimits.MaxActiveTasksPerUser);
+                return new CreateTaskResult(CreateStatus.UserNotFound, null, 0, 0);
             }
 
             int active = await _db.Tasks.CountAsync(t => t.UserId == userId
                 && (t.Status == SlaeTaskStatus.Pending || t.Status == SlaeTaskStatus.InProgress), ct);
 
-            if (active >= TaskLimits.MaxActiveTasksPerUser)
+            if (active >= userLimit.Value)
             {
-                return new CreateTaskResult(CreateStatus.LimitReached, null, active, TaskLimits.MaxActiveTasksPerUser);
+                return new CreateTaskResult(CreateStatus.LimitReached, null, active, userLimit.Value);
             }
 
             var task = new SlaeTask
@@ -50,7 +55,7 @@ namespace Slae.Persistence.Services
             await _db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
 
-            return new CreateTaskResult(CreateStatus.Created, task.Id, active + 1, TaskLimits.MaxActiveTasksPerUser);
+            return new CreateTaskResult(CreateStatus.Created, task.Id, active + 1, userLimit.Value);
         }
 
         public Task<TaskDetailsDto?> GetAsync(Guid userId, Guid taskId, CancellationToken ct) =>

@@ -1,0 +1,65 @@
+﻿@host = http://localhost:5001
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTM0ODU3OTksIm5iZiI6MTc5MzQ4MjE5OSwic3ViIjoiYjI4NDEzZGItYzY3My00YTdmLWFiZTktNTFlMmMwZjM4YmEzIiwidW5pcXVlX25hbWUiOiJhbmFzdGFzaWlhIiwianRpIjoiM2Q2Mjg0NzEtMmZmYy00YzQ1LTlhMzYtZTU5MmMwYzRkODBjIiwiaWF0IjoxNzkzNDgyMTk5fQ.p_PUyrfQp2IWf2u996_rbumrRE21NXQlL4SVLy7j-vA
+@token2 = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTM0ODc0NDksIm5iZiI6MTc5MzQ4Mzg0OSwic3ViIjoiMDM3MzdkZjUtNGRkMi00NWNjLWIzYTktZTFjYmQ3ZmY4OThjIiwidW5pcXVlX25hbWUiOiJ1c2VyX3R3byIsImp0aSI6IjdlMDIzMTM5LTQxNzctNGQ1ZS05ZDJiLWNmNjk1MDYyMjNiZCIsImlhdCI6MTc5MzQ4Mzg0OX0.cWNZ2tiXSaYGJ3ajaP5zPcGwaLF-CuDoXXoYi8cyCOc
+
+### реєстрація
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "username": "anastasiia", "password": "StrongPass123" }
+
+### вхід
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "anastasiia", "password": "StrongPass123" }
+
+### створити задачу
+POST {{host}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "dimension": 500, "epsilon": 1e-8, "maxIterations": 20000, "seed": 7, "dominance": 1.01 }
+
+### список задач
+GET {{host}}/api/tasks
+Authorization: Bearer {{token}}
+
+### одна задача
+GET {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b
+Authorization: Bearer {{token}}
+
+### скасувати задачу
+POST {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b/cancel
+Authorization: Bearer {{token}}
+
+### неправильні параметри, буде 400
+POST {{host}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "dimension": 100000 }
+
+### без токена, буде 401
+GET {{host}}/api/tasks
+
+### перевірка сервера
+GET {{host}}/health
+
+
+### реєстрація другого користувача
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "username": "user_two", "password": "StrongPass123" }
+
+### вхід другого користувача
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "user_two", "password": "StrongPass123" }
+
+
+### чужа задача, буде 404
+GET {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b
+Authorization: Bearer {{token2}}
