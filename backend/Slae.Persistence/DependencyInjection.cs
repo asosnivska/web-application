@@ -12,6 +12,7 @@ namespace Slae.Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<SlaeDbContext>(o => o.UseNpgsql(connectionString));
+            services.AddScoped<ISlaeDbContext>(sp => sp.GetRequiredService<SlaeDbContext>());
             services.AddScoped<ITaskStore, TaskStore>();
 
             services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
