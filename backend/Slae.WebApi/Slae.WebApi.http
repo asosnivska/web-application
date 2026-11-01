@@ -1,6 +1,6 @@
 ﻿@host = http://localhost:5001
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTM0ODU3OTksIm5iZiI6MTc5MzQ4MjE5OSwic3ViIjoiYjI4NDEzZGItYzY3My00YTdmLWFiZTktNTFlMmMwZjM4YmEzIiwidW5pcXVlX25hbWUiOiJhbmFzdGFzaWlhIiwianRpIjoiM2Q2Mjg0NzEtMmZmYy00YzQ1LTlhMzYtZTU5MmMwYzRkODBjIiwiaWF0IjoxNzkzNDgyMTk5fQ.p_PUyrfQp2IWf2u996_rbumrRE21NXQlL4SVLy7j-vA
-@token2 = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTM0ODc0NDksIm5iZiI6MTc5MzQ4Mzg0OSwic3ViIjoiMDM3MzdkZjUtNGRkMi00NWNjLWIzYTktZTFjYmQ3ZmY4OThjIiwidW5pcXVlX25hbWUiOiJ1c2VyX3R3byIsImp0aSI6IjdlMDIzMTM5LTQxNzctNGQ1ZS05ZDJiLWNmNjk1MDYyMjNiZCIsImlhdCI6MTc5MzQ4Mzg0OX0.cWNZ2tiXSaYGJ3ajaP5zPcGwaLF-CuDoXXoYi8cyCOc
+@token = paste-token-here
+@token2 = paste-token-here
 
 ### реєстрація
 POST {{host}}/api/auth/register
@@ -26,11 +26,11 @@ GET {{host}}/api/tasks
 Authorization: Bearer {{token}}
 
 ### одна задача
-GET {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b
+GET {{host}}/api/tasks/paste-token-here
 Authorization: Bearer {{token}}
 
 ### скасувати задачу
-POST {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b/cancel
+POST {{host}}/api/tasks/paste-token-here/cancel
 Authorization: Bearer {{token}}
 
 ### неправильні параметри, буде 400
@@ -63,3 +63,11 @@ Content-Type: application/json
 ### чужа задача, буде 404
 GET {{host}}/api/tasks/e056346a-9e00-4221-a2d6-bae65928970b
 Authorization: Bearer {{token2}}
+
+
+### довге завдання
+POST {{host}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "dimension": 3000, "epsilon": 1e-12, "maxIterations": 40000, "seed": 7, "dominance": 1.0001 }
