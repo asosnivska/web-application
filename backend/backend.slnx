@@ -3,4 +3,5 @@
   <Project Path="Slae.Domain/Slae.Domain.csproj" />
   <Project Path="Slae.Persistence/Slae.Persistence.csproj" />
   <Project Path="Slae.WebApi/Slae.WebApi.csproj" Id="c0e9b2a3-8f97-496f-b3d3-122c3aeaa67f" />
+  <Project Path="Slae.Worker/Slae.Worker.csproj" Id="d33d0879-e5e7-4cdd-bff5-1c2766fa80da" />
 </Solution>
