@@ -143,7 +143,7 @@ namespace Slae.Persistence.Services
             string failedSql = $$"""
             UPDATE "SlaeTasks"
             SET "Status" = {{Failed}}, "CompletedAt" = now(),
-                "ErrorMessage" = 'Воркер зупинився без результату, спроб більше немає.'
+                "ErrorMessage" = 'Worker stopped without a result, no attempts left.'
             WHERE "Status" = {{InProgress}} AND "WorkerLastReportedAt" < now() - @stale AND "Attempts" >= @max;
             """;
             string requeueSql = $$"""
