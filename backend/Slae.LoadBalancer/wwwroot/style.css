@@ -1,0 +1,35 @@
+﻿body {
+    font-family: sans-serif;
+    max-width: 900px;
+    margin: 2rem auto;
+}
+label {
+    margin-right: 1rem;
+}
+input {
+    margin: 0 .25rem .5rem 0;
+    padding: .3rem;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border-bottom: 1px solid #ccc;
+    padding: .4rem;
+    text-align: left;
+}
+progress {
+    width: 120px;
+}
+#msg {
+    color: #b00020;
+}
+#server {
+    color: #555;
+}
+pre {
+    background: #f4f4f4;
+    padding: .5rem;
+    overflow: auto;
+}
