@@ -1,4 +1,4 @@
-﻿@host = http://localhost:5001
+﻿@host = http://localhost:5000
 @token = paste-token-here
 @token2 = paste-token-here
 
