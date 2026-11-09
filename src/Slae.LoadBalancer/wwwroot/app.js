@@ -106,6 +106,8 @@ function button(text, onclick) {
     return b;
 }
 
+const cancelling = new Set();
+
 function renderTasks(tasks) {
     const body = $('tasks');
     body.replaceChildren();
@@ -120,8 +122,14 @@ function renderTasks(tasks) {
         cell(tr, t.dimension);
         cell(tr, new Date(t.createdAt).toLocaleString());
         const actions = document.createElement('span');
-        if (t.status === 'Pending' || t.status === 'InProgress')
-            actions.appendChild(button('Скасувати', () => cancelTask(t.id)));
+        if (t.status === 'Pending' || t.status === 'InProgress') {
+            const isCancelling = cancelling.has(t.id);
+            const b = button(isCancelling ? 'Скасовується…' : 'Скасувати', () => cancelTask(t.id));
+            b.disabled = isCancelling;
+            actions.appendChild(b);
+        } else {
+            cancelling.delete(t.id);
+        }
         if (t.status === 'Completed')
             actions.appendChild(button('Результат', () => showResult(t.id)));
         cell(tr, actions);
@@ -179,9 +187,14 @@ async function create() {
 
 async function cancelTask(id) {
     try {
+        showError();
+        cancelling.add(id);
         await api('POST', '/api/tasks/' + id + '/cancel');
         refresh();
-    } catch (e) { showError(e); }
+    } catch (e) {
+        cancelling.delete(id);
+        showError(e);
+    }
 }
 
 async function showResult(id) {
