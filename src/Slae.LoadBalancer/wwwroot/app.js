@@ -106,6 +106,16 @@ function button(text, onclick) {
     return b;
 }
 
+function statusText(t) {
+    if (t.status === 'Pending' && t.queuePosition) {
+        const wait = t.estimatedWaitSeconds > 0
+            ? ', очікування ≈ ' + t.estimatedWaitSeconds + ' с'
+            : ', скоро почнеться';
+        return 'В черзі: ' + t.queuePosition + wait;
+    }
+    return t.status;                                                  // інші статуси без змін
+}
+
 const cancelling = new Set();
 
 function renderTasks(tasks) {
@@ -114,8 +124,7 @@ function renderTasks(tasks) {
     for (const t of tasks) {
         const tr = document.createElement('tr');
         cell(tr, t.id.substring(0, 8));
-        cell(tr, t.status);
-        const p = document.createElement('progress');
+        cell(tr, statusText(t));        const p = document.createElement('progress');
         p.max = 100;
         p.value = t.progress;
         cell(tr, p);
