@@ -86,10 +86,19 @@ function start() {
     timer = setInterval(refresh, 2000);
 }
 
+let refreshFailed = false;
+
 async function refresh() {
     try {
         renderTasks(await api('GET', '/api/tasks?take=50'));
-    } catch (e) { showError(e); }
+        if (refreshFailed) {
+            showError();
+            refreshFailed = false;
+        }
+    } catch (e) {
+        refreshFailed = true;
+        showError(e);
+    }
 }
 
 function cell(tr, content) {
