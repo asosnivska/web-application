@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="run-all.ps1" />
+    <File Path="stop-all.ps1" />
+  </Folder>
   <Project Path="Slae.Application/Slae.Application.csproj" />
   <Project Path="Slae.Domain/Slae.Domain.csproj" />
   <Project Path="Slae.LoadBalancer/Slae.LoadBalancer.csproj" />
