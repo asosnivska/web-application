@@ -6,28 +6,41 @@
     <link rel='stylesheet' href='style.css'>
 </head>
 <body>
-    <h1>Розподілений розв'язувач СЛАР</h1>
+    <h1>Розв'язувач СЛАР</h1>
     <p id='server'></p>
     <p id='msg'></p>
 
     <section id='auth'>
-        <input id='username' placeholder='логін'>
-        <input id='password' type='password' placeholder='пароль'>
+        <label for='username'>Логін:
+            <input id='username' placeholder='Введіть логін'>
+        </label>
+        <label for='password'>Пароль:
+            <input id='password' type='password' placeholder='Введіть пароль'>
+        </label>
         <button id='login'>Увійти</button>
         <button id='register'>Зареєструватись</button>
     </section>
 
     <section id='app' hidden>
-        <p>Користувач: <b id='who'></b> <button id='logout'>Вийти</button></p>
-        <label>Розмір N <input id='dimension' type='number' value='500' min='2'></label>
-        <label>Точність <input id='epsilon' value='1e-8'></label>
-        <label>Домінування головної діагоналі<input id='dominance' value='1.01'></label>
+        <p>Користувач: 
+            <b id='who'></b> 
+            <button id='logout'>Вийти</button>
+        </p>
+        <label>Розмір N 
+            <input id='dimension' type='number' value='2000' min='1' max='3000'>
+        </label>
+        <label>Точність 
+            <input id='epsilon' value='1e-10'>
+        </label>
+        <label>Домінування головної діагоналі 
+            <input id='dominance' value='1.001'>
+        </label>
         <details>
             <summary>Ввести свою СЛАР</summary>
             <p>Кожен рядок: коефіцієнти і в кінці вільний член b, через пробіл. Рядків стільки, яким є N. Десяткові числа через крапку.</p>
             <textarea id='manual' rows='6' cols='60' placeholder='4 1 9&#10;1 5 7'></textarea>
         </details>
-        <button id='create'>Створити задачу</button>
+        <button id='create'>Розв'язати СЛАР</button>
         <table>
             <thead><tr><th>Id</th><th>Статус</th><th>Прогрес</th><th>N</th><th>Створено</th><th></th></tr></thead>
             <tbody id='tasks'></tbody>
