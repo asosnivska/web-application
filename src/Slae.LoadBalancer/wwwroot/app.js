@@ -113,7 +113,7 @@ function statusText(t) {
             : ', скоро почнеться';
         return 'В черзі: ' + t.queuePosition + wait;
     }
-    return t.status;                                                  // інші статуси без змін
+    return t.status;
 }
 
 const cancelling = new Set();
@@ -209,8 +209,15 @@ async function cancelTask(id) {
 async function showResult(id) {
     try {
         const t = await api('GET', '/api/tasks/' + id);
-        const text = JSON.stringify(t.result ?? t.error, null, 2);
-        $('result').textContent = text.slice(0, 2000);
+        const box = $('result');
+
+        if (t.error) {
+            box.textContent = 'Помилка: ' + t.error;
+            box.className = 'error';
+        } else {
+            box.textContent = JSON.stringify(t.result, null, 2).slice(0, 2000);
+            box.className = '';
+        }
     } catch (e) { showError(e); }
 }
 

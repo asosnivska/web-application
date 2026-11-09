@@ -22,17 +22,21 @@
     </section>
 
     <section id='app' hidden>
-        <p>Користувач: 
-            <b id='who'></b> 
+        <p>
+            Користувач:
+            <b id='who'></b>
             <button id='logout'>Вийти</button>
         </p>
-        <label>Розмір N 
+        <label>
+            Розмір N
             <input id='dimension' type='number' value='2000' min='1' max='3000'>
         </label>
-        <label>Точність 
+        <label>
+            Точність
             <input id='epsilon' value='1e-10'>
         </label>
-        <label>Домінування головної діагоналі 
+        <label>
+            Домінування головної діагоналі
             <input id='dominance' value='1.001'>
         </label>
         <details>
@@ -41,11 +45,11 @@
             <textarea id='manual' rows='6' cols='60' placeholder='4 1 9&#10;1 5 7'></textarea>
         </details>
         <button id='create'>Розв'язати СЛАР</button>
+        <pre id='result'></pre>
         <table>
             <thead><tr><th>Id</th><th>Статус</th><th>Прогрес</th><th>N</th><th>Створено</th><th></th></tr></thead>
             <tbody id='tasks'></tbody>
         </table>
-        <pre id='result'></pre>
     </section>
 
     <script src='app.js'></script>

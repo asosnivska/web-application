@@ -33,7 +33,18 @@ pre {
     background: #f4f4f4;
     padding: .5rem;
     overflow: auto;
+    max-height: 300px;
 }
+
+    pre:empty {
+        display: none;
+    }
+
+    pre.error {
+        background: #fdecea;
+        color: #b00020;
+        white-space: pre-wrap;
+    }
 details {
     margin: .5rem 0 1rem;
 }
