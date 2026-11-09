@@ -25,4 +25,4 @@ Start-Sleep -Seconds 6
 Start-Svc 'loadbalancer' 'run --no-build --project Slae.LoadBalancer --no-launch-profile'
 $script:ids | Set-Content (Join-Path $PSScriptRoot '.pids')
 Start-Sleep -Seconds 3
-Start-Process 'http://localhost:5000/'
+Start-Process 'https://localhost:5443/'
