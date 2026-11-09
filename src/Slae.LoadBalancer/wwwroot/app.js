@@ -3,6 +3,27 @@ const USER_KEY = 'slae_user';
 const $ = (id) => document.getElementById(id);
 let timer = null;
 
+const LIMITS = {
+    maxDimension: 3000,
+    maxManualDimension: 500,
+    minEpsilon: 1e-12,
+    maxEpsilon: 0.1,
+    minDominance: 1.0001,
+    maxDominance: 10,
+    maxIterations: 200000,
+    maxOperations: 4.5e11
+};
+
+function checkInput(n, epsilon, dominance, isManual) {
+    const maxN = isManual ? LIMITS.maxManualDimension : LIMITS.maxDimension;
+    if (!Number.isInteger(n) || n < 1 || n > maxN)
+        throw new Error('Розмір N має бути цілим числом від 1 до ' + maxN);
+    if (!Number.isFinite(epsilon) || epsilon < LIMITS.minEpsilon || epsilon > LIMITS.maxEpsilon)
+        throw new Error('Точність має бути від ' + LIMITS.minEpsilon + ' до ' + LIMITS.maxEpsilon);
+    if (!isManual && (!Number.isFinite(dominance) || dominance < LIMITS.minDominance || dominance > LIMITS.maxDominance))
+        throw new Error('Домінування має бути від ' + LIMITS.minDominance + ' до ' + LIMITS.maxDominance);
+}
+
 function showError(e) {
     $('msg').textContent = e ? e.message : '';
 }
@@ -131,17 +152,23 @@ async function create() {
     showError();
 
     try {
-        const body = {
-            epsilon: Number($('epsilon').value),
-            dominance: Number($('dominance').value)
-        };
-
+        const epsilon = Number($('epsilon').value);
+        const dominance = Number($('dominance').value);
         const manual = $('manual').value.trim();
+        const body = { epsilon: epsilon };
 
-        if (manual)
+        if (manual) {
             Object.assign(body, parseManual(manual));
-        else
+        } else {
             body.dimension = Number($('dimension').value);
+            body.dominance = dominance;
+        }
+
+        checkInput(body.dimension, epsilon, dominance, !!manual);
+
+        body.maxIterations = Math.min(
+            LIMITS.maxIterations,
+            Math.floor(LIMITS.maxOperations / (body.dimension * body.dimension)));
 
         await api('POST', '/api/tasks', body);
         refresh();
