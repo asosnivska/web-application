@@ -1,9 +1,10 @@
 ﻿Set-Location $PSScriptRoot
+if (Test-Path (Join-Path $PSScriptRoot '.pids')) { & (Join-Path $PSScriptRoot 'stop-all.ps1') }
 $logs = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force $logs | Out-Null
-Write-Host 'Збираємо проєкт...'
+Write-Host 'Building the project...'
 dotnet build --nologo -v q
-if ($LASTEXITCODE -ne 0) { Write-Host 'Збірка не вдалася'; exit 1 }
+if ($LASTEXITCODE -ne 0) { Write-Host 'Build failed'; exit 1 }
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:DOTNET_ENVIRONMENT = 'Development'
 $script:ids = @()
@@ -12,8 +13,8 @@ function Start-Svc($name, $dotnetArgs) {
   $p = Start-Process dotnet -ArgumentList $dotnetArgs -WorkingDirectory $PSScriptRoot `
        -WindowStyle Hidden -PassThru `
        -RedirectStandardOutput "$logs\$name.log" -RedirectStandardError "$logs\$name.err.log"
-  Write-Host "$name запущено (PID $($p.Id))"
-  $script:ids += $p.Id
+Write-Host "$name started (PID $($p.Id))"
+$script:ids += $p.Id
 }
 
 Start-Svc 'api-1' 'run --no-build --project Slae.WebApi --no-launch-profile --urls http://localhost:5001 -- --ServerId=api-1'

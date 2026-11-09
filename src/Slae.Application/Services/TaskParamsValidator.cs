@@ -50,30 +50,34 @@ namespace Slae.Application.Services
                 }
                 else
                 {
-                    for (int i = 0; i < n; i++)
+                    if (p.Matrix.Any(r => r.Any(x => !double.IsFinite(x))))
                     {
-                        double diag = Math.Abs(p.Matrix[i][i]);
-                        double rest = 0;
-                        for (int j = 0; j < n; j++)
-                        {
-                            if (!double.IsFinite(p.Matrix[i][j]))
-                            {
-                                errors.Add("Matrix contains invalid numbers!");
-                            }
-                            if (j != i)
-                            {
-                                rest += Math.Abs(p.Matrix[i][j]);
-                            }
-                        }
-                        if (diag <= rest)
-                        {
-                            errors.Add($"Row {i + 1} lacks diagonal dominance: Jacobi method may not converge!");
-                            break;
-                        }
+                        errors.Add("Matrix contains invalid numbers!");
                     }
                     if (p.Vector.Any(v => !double.IsFinite(v)))
                     {
                         errors.Add("Vector contains invalid numbers!");
+                    }
+
+                    if (errors.Count == 0)
+                    {
+                        for (int i = 0; i < n; i++)
+                        {
+                            double diag = Math.Abs(p.Matrix[i][i]);
+                            double rest = 0;
+                            for (int j = 0; j < n; j++)
+                            {
+                                if (j != i)
+                                {
+                                    rest += Math.Abs(p.Matrix[i][j]);
+                                }
+                            }
+                            if (diag <= rest)
+                            {
+                                errors.Add($"Row {i + 1} lacks diagonal dominance: Jacobi method may not converge!");
+                                break;
+                            }
+                        }
                     }
                 }
             }

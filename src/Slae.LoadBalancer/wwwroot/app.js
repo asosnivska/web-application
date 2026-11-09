@@ -88,7 +88,7 @@ function start() {
 
 async function refresh() {
     try {
-        renderTasks(await api('GET', '/api/tasks'));
+        renderTasks(await api('GET', '/api/tasks?take=50'));
     } catch (e) { showError(e); }
 }
 
@@ -130,7 +130,7 @@ function renderTasks(tasks) {
         } else {
             cancelling.delete(t.id);
         }
-        if (t.status === 'Completed')
+        if (t.status === 'Completed' || t.status === 'Failed')
             actions.appendChild(button('Результат', () => showResult(t.id)));
         cell(tr, actions);
         body.appendChild(tr);
@@ -141,12 +141,12 @@ function parseManual(text) {
     const rows = text.trim().split(/\r?\n/).filter(r => r.trim() !== '');
     const n = rows.length;
     const matrix = [];
-    const vector = [];
+    const vector = [];   
 
     for (const row of rows) {
         const nums = row.trim().split(/[\s,;]+/).map(Number);
 
-        if (nums.length !== n + 1 || nums.some(Number.isNaN))
+        if (nums.length !== n + 1 || nums.some(x => !Number.isFinite(x)))
             throw new Error('Кожен рядок має містити ' + (n + 1) + ' чисел: N коефіцієнтів і b');
 
         matrix.push(nums.slice(0, n));
