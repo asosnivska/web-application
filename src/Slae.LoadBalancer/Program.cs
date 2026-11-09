@@ -18,6 +18,7 @@ builder.Services.AddSingleton(new HttpClient(new SocketsHttpHandler
     Timeout = Timeout.InfiniteTimeSpan
 });
 
+builder.Services.AddHttpsRedirection(options => options.HttpsPort = 5443);
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.AddServerHeader = false;
@@ -25,6 +26,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+app.UseHttpsRedirection();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
