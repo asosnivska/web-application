@@ -25,12 +25,14 @@ namespace Slae.Application.Interfaces
 
     public record TaskSummaryDto(
         Guid Id, SlaeTaskStatus Status, int Progress, int Dimension,
-        DateTime CreatedAt, DateTime? CompletedAt);
+        DateTime CreatedAt, DateTime? CompletedAt,
+        int? QueuePosition = null, int? EstimatedWaitSeconds = null);
 
     public record TaskDetailsDto(
         Guid Id, SlaeTaskStatus Status, int Progress, int Dimension,
         DateTime CreatedAt, DateTime? CompletedAt,
-        string? ResultJson, string? ErrorMessage);
+        string? ResultJson, string? ErrorMessage,
+        int? QueuePosition = null, int? EstimatedWaitSeconds = null);
 
     public interface ITaskStore
     {

@@ -27,6 +27,7 @@ namespace Slae.Persistence.Services
             SET "Status" = {{InProgress}},
                 "ServerId" = @server,
                 "WorkerLastReportedAt" = now(),
+            "StartedAt" = now(),
                 "Attempts" = "Attempts" + 1
             WHERE "Id" = (
                 SELECT "Id" FROM "SlaeTasks"

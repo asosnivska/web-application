@@ -27,20 +27,23 @@ public class CreateTaskRequest
 }
 
 public record TaskSummaryResponse(
-    Guid Id, string Status, int Progress, int Dimension, DateTime CreatedAt, DateTime? CompletedAt);
+    Guid Id, string Status, int Progress, int Dimension, DateTime CreatedAt, DateTime? CompletedAt,
+    int? QueuePosition, int? EstimatedWaitSeconds);
 
 public record TaskDetailsResponse(
     Guid Id, string Status, int Progress, int Dimension, DateTime CreatedAt, DateTime? CompletedAt,
-    JsonElement? Result, string? Error);
+    JsonElement? Result, string? Error, int? QueuePosition, int? EstimatedWaitSeconds);
+
 
 public static class TaskMapping
 {
     public static TaskSummaryResponse ToResponse(TaskSummaryDto d) =>
-        new(d.Id, d.Status.ToString(), d.Progress, d.Dimension, d.CreatedAt, d.CompletedAt);
+        new(d.Id, d.Status.ToString(), d.Progress, d.Dimension, d.CreatedAt, d.CompletedAt,
+            d.QueuePosition, d.EstimatedWaitSeconds);
 
     public static TaskDetailsResponse ToResponse(TaskDetailsDto d) =>
         new(d.Id, d.Status.ToString(), d.Progress, d.Dimension, d.CreatedAt, d.CompletedAt,
-            ParseJson(d.ResultJson), d.ErrorMessage);
+            ParseJson(d.ResultJson), d.ErrorMessage, d.QueuePosition, d.EstimatedWaitSeconds);
 
     private static JsonElement? ParseJson(string? json)
     {
