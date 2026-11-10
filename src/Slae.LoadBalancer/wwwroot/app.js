@@ -52,12 +52,24 @@ async function api(method, path, body) {
     return data;
 }
 
+function checkCredentials(username, password) {
+    if (!/^[a-zA-Z0-9_]{3,50}$/.test(username))
+        throw new Error('Логін: від 3 до 50 символів, лише латинські літери, цифри та _');
+    if (password.length < 8)
+        throw new Error('Пароль має містити щонайменше 8 символів');
+    if (password.length > 128)
+        throw new Error('Пароль занадто довгий (максимум 128 символів)');
+}
+
 async function auth(kind) {
     showError();
     try {
+        const username = $('username').value;
+        const password = $('password').value;
+        if (kind === 'register') checkCredentials(username, password);
         const data = await api('POST', '/api/auth/' + kind, {
-            username: $('username').value,
-            password: $('password').value
+            username: username,
+            password: password
         });
         localStorage.setItem(TOKEN_KEY, data.token);
         localStorage.setItem(USER_KEY, data.username);
@@ -165,7 +177,7 @@ function parseManual(text) {
         const nums = row.trim().split(/[\s,;]+/).map(Number);
 
         if (nums.length !== n + 1 || nums.some(x => !Number.isFinite(x)))
-            throw new Error('Кожен рядок має містити ' + (n + 1) + ' чисел: N коефіцієнтів і b');
+            throw new Error('У кожному рядку має бути чисел: ' + (n + 1) + ' (N коефіцієнтів і вільний член b)');
 
         matrix.push(nums.slice(0, n));
         vector.push(nums[n]);
