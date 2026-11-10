@@ -11,12 +11,17 @@
     <p id='msg'></p>
 
     <section id='auth'>
-        <label for='username'>Логін:
+        <label for='username'>
+            Логін:
             <input id='username' placeholder='Введіть логін'>
         </label>
-        <label for='password'>Пароль:
+        <label for='password'>
+            Пароль:
             <input id='password' type='password' placeholder='Введіть пароль'>
         </label>
+        <label class='hint'>
+            <input type='checkbox' id='showPassword'> Показати пароль
+        </label>        
         <button id='login'>Увійти</button>
         <button id='register'>Зареєструватись</button>
     </section>
@@ -45,6 +50,7 @@
             <textarea id='manual' rows='6' cols='60' placeholder='4 1 9&#10;1 5 7'></textarea>
         </details>
         <button id='create'>Розв'язати СЛАР</button>
+        <button id='closeResult' hidden>Закрити результат</button>
         <pre id='result'></pre>
         <table>
             <thead><tr><th>Id</th><th>Статус</th><th>Прогрес</th><th>N</th><th>Створено</th><th></th></tr></thead>

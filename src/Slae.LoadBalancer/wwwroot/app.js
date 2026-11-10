@@ -239,6 +239,7 @@ async function showResult(id) {
             box.textContent = JSON.stringify(t.result, null, 2).slice(0, 2000);
             box.className = '';
         }
+        $('closeResult').hidden = false;
     } catch (e) { showError(e); }
 }
 
@@ -246,4 +247,12 @@ $('login').onclick = () => auth('login');
 $('register').onclick = () => auth('register');
 $('logout').onclick = logout;
 $('create').onclick = create;
+$('showPassword').onchange = () => {
+    $('password').type = $('showPassword').checked ? 'text' : 'password';
+};
+$('closeResult').onclick = () => {
+    $('result').textContent = '';
+    $('result').className = '';
+    $('closeResult').hidden = true;
+};
 if (localStorage.getItem(TOKEN_KEY)) start(); else view(false);
