@@ -33,16 +33,23 @@ pre {
     background: #f4f4f4;
     padding: .5rem;
     overflow: auto;
+    max-height: 300px;
+}
+pre:empty {
+    display: none;
+}
+pre.error {
+    background: #fdecea;
+    color: #b00020;
+    white-space: pre-wrap;
 }
 details {
     margin: .5rem 0 1rem;
 }
-
 summary {
     cursor: pointer;
     margin-bottom: .5rem;
 }
-
 #create {
     display: block;
     margin: 1rem auto;
@@ -50,4 +57,26 @@ summary {
 }
 #dimension, #epsilon, #dominance {
     width: 7rem;
+}
+#auth label {
+    display: block;
+    margin-bottom: .5rem;
+}
+.hint {
+    font-size: .85rem;
+    color: #555;
+}
+
+#auth button {
+    margin-top: .5rem;
+    font-size: 1rem;
+    padding: .3rem .8rem;
+}
+h1, #server, #msg {
+    text-align: center;
+}
+
+#auth {
+    width: fit-content;
+    margin: 2rem auto;
 }

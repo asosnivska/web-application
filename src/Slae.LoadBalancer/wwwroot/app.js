@@ -52,12 +52,24 @@ async function api(method, path, body) {
     return data;
 }
 
+function checkCredentials(username, password) {
+    if (!/^[a-zA-Z0-9_]{3,50}$/.test(username))
+        throw new Error('Логін: від 3 до 50 символів, лише латинські літери, цифри та _');
+    if (password.length < 8)
+        throw new Error('Пароль має містити щонайменше 8 символів');
+    if (password.length > 128)
+        throw new Error('Пароль занадто довгий (максимум 128 символів)');
+}
+
 async function auth(kind) {
     showError();
     try {
+        const username = $('username').value;
+        const password = $('password').value;
+        if (kind === 'register') checkCredentials(username, password);
         const data = await api('POST', '/api/auth/' + kind, {
-            username: $('username').value,
-            password: $('password').value
+            username: username,
+            password: password
         });
         localStorage.setItem(TOKEN_KEY, data.token);
         localStorage.setItem(USER_KEY, data.username);
@@ -86,10 +98,19 @@ function start() {
     timer = setInterval(refresh, 2000);
 }
 
+let refreshFailed = false;
+
 async function refresh() {
     try {
         renderTasks(await api('GET', '/api/tasks?take=50'));
-    } catch (e) { showError(e); }
+        if (refreshFailed) {
+            showError();
+            refreshFailed = false;
+        }
+    } catch (e) {
+        refreshFailed = true;
+        showError(e);
+    }
 }
 
 function cell(tr, content) {
@@ -113,7 +134,7 @@ function statusText(t) {
             : ', скоро почнеться';
         return 'В черзі: ' + t.queuePosition + wait;
     }
-    return t.status;                                                  // інші статуси без змін
+    return t.status;
 }
 
 const cancelling = new Set();
@@ -156,7 +177,7 @@ function parseManual(text) {
         const nums = row.trim().split(/[\s,;]+/).map(Number);
 
         if (nums.length !== n + 1 || nums.some(x => !Number.isFinite(x)))
-            throw new Error('Кожен рядок має містити ' + (n + 1) + ' чисел: N коефіцієнтів і b');
+            throw new Error('У кожному рядку має бути чисел: ' + (n + 1) + ' (N коефіцієнтів і вільний член b)');
 
         matrix.push(nums.slice(0, n));
         vector.push(nums[n]);
@@ -209,8 +230,16 @@ async function cancelTask(id) {
 async function showResult(id) {
     try {
         const t = await api('GET', '/api/tasks/' + id);
-        const text = JSON.stringify(t.result ?? t.error, null, 2);
-        $('result').textContent = text.slice(0, 2000);
+        const box = $('result');
+
+        if (t.error) {
+            box.textContent = 'Помилка: ' + t.error;
+            box.className = 'error';
+        } else {
+            box.textContent = JSON.stringify(t.result, null, 2).slice(0, 2000);
+            box.className = '';
+        }
+        $('closeResult').hidden = false;
     } catch (e) { showError(e); }
 }
 
@@ -218,4 +247,12 @@ $('login').onclick = () => auth('login');
 $('register').onclick = () => auth('register');
 $('logout').onclick = logout;
 $('create').onclick = create;
+$('showPassword').onchange = () => {
+    $('password').type = $('showPassword').checked ? 'text' : 'password';
+};
+$('closeResult').onclick = () => {
+    $('result').textContent = '';
+    $('result').className = '';
+    $('closeResult').hidden = true;
+};
 if (localStorage.getItem(TOKEN_KEY)) start(); else view(false);
