@@ -427,3 +427,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Local scripts: PID list written by run-all.ps1 and read by stop-all.ps1
+.pids
