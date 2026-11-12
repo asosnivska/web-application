@@ -13,6 +13,18 @@
 
 Не реалізовано: автоматичне масштабування і панель адміністратора.
 
+## Як це працює
+ 
+<img width="1422" height="517" alt="image" src="https://github.com/user-attachments/assets/f7fd32b1-28d5-4bfb-8f50-915bafc8d44d" />
+ 
+- **Балансувальник** (`Slae.LoadBalancer`) віддає фронтенд, завершує HTTPS і по колу передає запити живим API.
+- **API** (`Slae.WebApi`) перевіряє JWT, створює й показує задачі.
+- **Worker** (`Slae.Worker`) сам бере задачі з бази, рахує паралельно і записує прогрес.
+- **PostgreSQL** зберігає користувачів і задачі та працює як черга.
+
+<img width="1047" height="590" alt="image" src="https://github.com/user-attachments/assets/63e1914c-046b-4f53-a1f1-12b8518c63d5" />
+
+
 ## Запуск (Windows, PowerShell)
 
 Потрібні .NET 10 SDK, PostgreSQL і `dotnet-ef` (`dotnet tool install --global dotnet-ef`).
