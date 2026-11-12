@@ -44,8 +44,10 @@ async function api(method, path, body) {
         headers: headers,
         body: body ? JSON.stringify(body) : undefined
     });
-    $('server').textContent = 'Відповів сервер: ' + (res.headers.get('X-Served-By') || '?');
-    if (res.status === 401 && token) logout();
+    if (res.status === 401 && token) {
+        logout();
+        throw new Error('');
+    }
     let data = null;
     try { data = await res.json(); } catch { }
     if (!res.ok) throw new Error(errorText(res.status, data));
@@ -145,7 +147,8 @@ function renderTasks(tasks) {
     for (const t of tasks) {
         const tr = document.createElement('tr');
         cell(tr, t.id.substring(0, 8));
-        cell(tr, statusText(t));        const p = document.createElement('progress');
+        cell(tr, statusText(t));
+        const p = document.createElement('progress');
         p.max = 100;
         p.value = t.progress;
         cell(tr, p);

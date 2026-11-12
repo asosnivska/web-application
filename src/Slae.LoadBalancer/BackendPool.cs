@@ -13,7 +13,7 @@ public class BackendPool
 
         if (urls.Count == 0)
         {
-            throw new InvalidOperationException("LoadBalancer:Backends is empty. Add at least one server address.");
+            throw new InvalidOperationException("LoadBalancer:Backends is empty. Add at least one server address");
         }
 
         _backends = urls.Select(u => new Backend(new Uri(u))).ToArray();

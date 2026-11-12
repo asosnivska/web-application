@@ -15,6 +15,5 @@ namespace Slae.Application.Models
         public const int MaxRunSeconds = 900;
         public const double MinDominance = 1.0001;
         public const double MaxDominance = 10.0;
-        public const int MaxActiveTasksPerUser = 3;
     }
 }
