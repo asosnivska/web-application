@@ -17,11 +17,11 @@ var connectionString = configuration.GetConnectionString(nameof(SlaeDbContext))
 builder.Services.AddPersistence(connectionString);
 
 var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
-    ?? throw new InvalidOperationException("Section 'Jwt' not found in configuration.");
+    ?? throw new InvalidOperationException("Section 'Jwt' not found in configuration");
 
 if (Encoding.UTF8.GetByteCount(jwt.Key) < 32)
 {
-    throw new InvalidOperationException("Jwt:Key must be at least 32 bytes. Set it with dotnet user-secrets.");
+    throw new InvalidOperationException("Jwt:Key must be at least 32 bytes. Set it with dotnet user-secrets");
 }
 
 builder.Services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));

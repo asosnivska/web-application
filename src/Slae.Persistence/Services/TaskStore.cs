@@ -92,14 +92,14 @@ namespace Slae.Persistence.Services
 
             foreach (var r in running)
             {
-                double elapsed = r.StartedAt is null ? 0 : Math.Max(0, (now - r.StartedAt.Value).TotalSeconds); // скільки вже працює
-                double byAverage = Math.Max(0, avgSeconds - elapsed);                                           // оцінка за середнім часом
+                double elapsed = r.StartedAt is null ? 0 : Math.Max(0, (now - r.StartedAt.Value).TotalSeconds);
+                double byAverage = Math.Max(0, avgSeconds - elapsed);
                 double byProgress = r.Progress >= 1
-                    ? elapsed * (100 - r.Progress) / r.Progress                                                  // оцінка за прогресом
-                    : byAverage;                                                                                 // прогресу ще немає
-                double weight = r.Progress / 100.0;                                                              // що більший прогрес, то більше довіри до нього
-                double remaining = weight * byProgress + (1 - weight) * byAverage;                              // змішуємо обидві оцінки
-                slots.Add(Math.Max(5, remaining));                                                               // не менше 5 с
+                    ? elapsed * (100 - r.Progress) / r.Progress
+                    : byAverage;
+                double weight = r.Progress / 100.0;
+                double remaining = weight * byProgress + (1 - weight) * byAverage;
+                slots.Add(Math.Max(5, remaining));
             }
 
             while (slots.Count < WorkerCount)

@@ -16,7 +16,7 @@ public class ProxyHandler
     private readonly ILogger<ProxyHandler> _logger;
 
     public ProxyHandler(
-        BackendPool pool, HttpClient client, IOptions<LoadBalancerOptions> options, ILogger<ProxyHandler> logger) // усе подає сама програма
+        BackendPool pool, HttpClient client, IOptions<LoadBalancerOptions> options, ILogger<ProxyHandler> logger)
     {
         _pool = pool;
         _client = client;

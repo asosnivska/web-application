@@ -28,7 +28,8 @@ foreach ($port in 5001, 5002) {
       break
     } catch { Start-Sleep -Seconds 1 }
   }
-}Start-Svc 'loadbalancer' 'run --no-build --project Slae.LoadBalancer --no-launch-profile'
+}
+Start-Svc 'loadbalancer' 'run --no-build --project Slae.LoadBalancer --no-launch-profile'
 $script:ids | Set-Content (Join-Path $PSScriptRoot '.pids')
 Start-Sleep -Seconds 3
 Start-Process 'https://localhost:5443/'

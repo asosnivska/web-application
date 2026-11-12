@@ -6,7 +6,7 @@ public class RegisterRequest
 {
     [Required]
     [StringLength(50, MinimumLength = 3)]
-    [RegularExpression("^[a-zA-Z0-9_]+$", ErrorMessage = "Only letters, digits and underscore are allowed.")]
+    [RegularExpression("^[a-zA-Z0-9_]+$", ErrorMessage = "Only letters, digits and underscore are allowed")]
     public string Username { get; set; } = string.Empty;
 
     [Required]
