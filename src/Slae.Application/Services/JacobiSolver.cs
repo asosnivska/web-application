@@ -8,24 +8,12 @@ namespace Slae.Application.Services
 {
     public static class JacobiSolver
     {
-        public static JacobiResult Solve(
-            double[][] a, double[] b, int n,
-            double epsilon, int maxIterations,
-            int maxThreads,
-            IProgress<int>? progress,
-            CancellationToken ct)
+        public static JacobiResult Solve(double[][] a, double[] b, int n,
+            double epsilon, int maxIterations, IProgress<int>? progress, CancellationToken ct)
         {
             Stopwatch sw = Stopwatch.StartNew();
             double[] xOld = new double[n];
             double[] xNew = new double[n];
-
-            int chunks = Math.Min(n, Math.Max(1, maxThreads) * 4);
-            double[] chunkMax = new double[chunks];
-            ParallelOptions options = new ParallelOptions
-            {
-                MaxDegreeOfParallelism = maxThreads,
-                CancellationToken = ct
-            };
 
             int iterations = 0;
             bool isSolved = false;
@@ -36,45 +24,34 @@ namespace Slae.Application.Services
             {
                 ct.ThrowIfCancellationRequested();
 
-                double[] cur = xOld;
-                double[] next = xNew;
+                double diff = 0;
 
-                Parallel.For(0, chunks, options, c =>
+                for (int i = 0; i < n; i++)
                 {
-                    int from = (int)((long)c * n / chunks);
-                    int to = (int)((long)(c + 1) * n / chunks);
-                    double localMax = 0;
-
-                    for (int i = from; i < to; i++)
+                    double sum = 0;
+                    for (int j = 0; j < n; j++)
                     {
-                        double sum = 0;
-                        for (int j = 0; j < n; j++)
+                        if (j != i)
                         {
-                            if (j != i)
-                            {
-                                sum += a[i][j] * cur[j];
-                            }
-                        }
-
-                        double v = (b[i] - sum) / a[i][i];
-                        next[i] = v;
-
-                        double d = Math.Abs(v - cur[i]);
-                        if (d > localMax)
-                        {
-                            localMax = d;
+                            sum += a[i][j] * xOld[j];
                         }
                     }
-                    chunkMax[c] = localMax;
-                });
+
+                    double v = (b[i] - sum) / a[i][i];
+                    xNew[i] = v;
+
+                    double d = Math.Abs(v - xOld[i]);
+                    if (d > diff)
+                    {
+                        diff = d;
+                    }
+                }
 
                 iterations++;
 
                 double[] temp = xOld;
                 xOld = xNew;
                 xNew = temp;
-
-                double diff = chunkMax.Max();
 
                 if (!double.IsFinite(diff))
                 {

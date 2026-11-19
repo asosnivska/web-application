@@ -61,7 +61,7 @@ public class TaskRunner
             var (a, b) = SlaeGenerator.Build(p);
 
             JacobiResult result = await Task.Run(() => JacobiSolver.Solve(
-                a, b, p.Dimension, p.Epsilon, p.MaxIterations, GetThreads(), state, runCts.Token));
+                a, b, p.Dimension, p.Epsilon, p.MaxIterations, state, runCts.Token));
 
             await StopHeartbeatAsync(heartbeatCts, heartbeat);
 
@@ -156,8 +156,6 @@ public class TaskRunner
         await heartbeatCts.CancelAsync();
         await heartbeat;
     }
-
-    private int GetThreads() => _options.MaxThreads > 0 ? _options.MaxThreads : Environment.ProcessorCount;
 
     private sealed class RunState : IProgress<int>
     {

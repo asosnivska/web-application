@@ -152,6 +152,7 @@ function renderTasks(tasks) {
         p.max = 100;
         p.value = t.progress;
         cell(tr, p);
+        tr.lastChild.append(' ' + t.progress + '%');
         cell(tr, t.dimension);
         cell(tr, new Date(t.createdAt).toLocaleString());
         const actions = document.createElement('span');
