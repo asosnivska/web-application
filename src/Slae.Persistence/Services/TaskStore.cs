@@ -60,8 +60,7 @@ namespace Slae.Persistence.Services
             return new CreateTaskResult(CreateStatus.Created, task.Id, active + 1, userLimit.Value);
         }
 
-        private async Task<(int? Position, int? Eta)> GetQueueInfoAsync(
-            SlaeTaskStatus status, DateTime createdAt, CancellationToken ct)
+        private async Task<(int? QueuePosition, int? EstimatedWaitSeconds)> GetQueueInfoAsync(SlaeTaskStatus status, DateTime createdAt, CancellationToken ct)
         {
             if (status != SlaeTaskStatus.Pending)
             {
@@ -71,10 +70,13 @@ namespace Slae.Persistence.Services
             int ahead = await _db.Tasks.CountAsync(t =>
                 t.Status == SlaeTaskStatus.Pending && !t.IsCanceled && t.CreatedAt < createdAt, ct);
 
-            var running = await _db.Tasks.AsNoTracking()
-                .Where(t => t.Status == SlaeTaskStatus.InProgress)
-                .Select(t => new { t.Progress, t.StartedAt })
-                .ToListAsync(ct);
+            int runningCount = await _db.Tasks.CountAsync(t =>
+                t.Status == SlaeTaskStatus.InProgress, ct);
+
+            if (ahead + runningCount < WorkerCount)
+            {
+                return (ahead + 1, 0);
+            }
 
             var recent = await _db.Tasks.AsNoTracking()
                 .Where(t => t.Status == SlaeTaskStatus.Completed && t.StartedAt != null && t.CompletedAt != null)
@@ -87,34 +89,10 @@ namespace Slae.Persistence.Services
                 ? recent.Average(x => (x.CompletedAt!.Value - x.StartedAt!.Value).TotalSeconds)
                 : 30;
 
-            DateTime now = DateTime.UtcNow;
-            var slots = new List<double>();
+            double totalWorkSeconds = (ahead + runningCount) * avgSeconds;
+            int estimatedWaitSeconds = (int)Math.Ceiling(totalWorkSeconds / WorkerCount);
 
-            foreach (var r in running)
-            {
-                double elapsed = r.StartedAt is null ? 0 : Math.Max(0, (now - r.StartedAt.Value).TotalSeconds);
-                double byAverage = Math.Max(0, avgSeconds - elapsed);
-                double byProgress = r.Progress >= 1
-                    ? elapsed * (100 - r.Progress) / r.Progress
-                    : byAverage;
-                double weight = r.Progress / 100.0;
-                double remaining = weight * byProgress + (1 - weight) * byAverage;
-                slots.Add(Math.Max(5, remaining));
-            }
-
-            while (slots.Count < WorkerCount)
-            {
-                slots.Add(0);
-            }
-
-            for (int i = 0; i < ahead; i++)
-            {
-                slots.Sort();
-                slots[0] += avgSeconds;
-            }
-
-            int eta = (int)Math.Ceiling(slots.Min());
-            return (ahead + 1, eta);
+            return (ahead + 1, estimatedWaitSeconds);
         }
 
         public async Task<TaskDetailsDto?> GetAsync(Guid userId, Guid taskId, CancellationToken ct)
@@ -130,8 +108,8 @@ namespace Slae.Persistence.Services
                 return null;
             }
 
-            var (position, eta) = await GetQueueInfoAsync(t.Status, t.CreatedAt, ct);
-            return t with { QueuePosition = position, EstimatedWaitSeconds = eta };
+            var (queuePosition, estimatedWaitSeconds) = await GetQueueInfoAsync(t.Status, t.CreatedAt, ct);
+            return t with { QueuePosition = queuePosition, EstimatedWaitSeconds = estimatedWaitSeconds };
         }
 
         public async Task<List<TaskSummaryDto>> ListAsync(Guid userId, int skip, int take, CancellationToken ct)
@@ -149,8 +127,8 @@ namespace Slae.Persistence.Services
             {
                 if (items[i].Status == SlaeTaskStatus.Pending)
                 {
-                    var (position, eta) = await GetQueueInfoAsync(items[i].Status, items[i].CreatedAt, ct);
-                    items[i] = items[i] with { QueuePosition = position, EstimatedWaitSeconds = eta };
+                    var (queuePosition, estimatedWaitSeconds) = await GetQueueInfoAsync(items[i].Status, items[i].CreatedAt, ct);
+                    items[i] = items[i] with { QueuePosition = queuePosition, EstimatedWaitSeconds = estimatedWaitSeconds };
                 }
             }
 
@@ -177,7 +155,7 @@ namespace Slae.Persistence.Services
                 .Where(t => t.Id == taskId && t.UserId == userId && t.Status == SlaeTaskStatus.InProgress)
                 .ExecuteUpdateAsync(s => s.SetProperty(t => t.IsCanceled, true), ct);
 
-            if (changed == 1) 
+            if (changed == 1)
             {
                 return CancelResult.CancelRequested;
             }
