@@ -1,9 +1,16 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Slae.Worker": {
+    "worker-1": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
+      "commandLineArgs": "--ServerId=worker-1",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "worker-2": {
+      "commandName": "Project",
+      "commandLineArgs": "--ServerId=worker-2",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }
