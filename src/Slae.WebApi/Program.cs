@@ -35,6 +35,7 @@ builder.Services
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            RoleClaimType = "role",
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,

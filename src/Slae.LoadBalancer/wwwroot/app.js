@@ -24,8 +24,12 @@ function checkInput(n, epsilon, dominance, isManual) {
         throw new Error('Домінування має бути від ' + LIMITS.minDominance + ' до ' + LIMITS.maxDominance);
 }
 
+let errorTimer = null;
+
 function showError(e) {
     $('msg').textContent = e ? e.message : '';
+    clearTimeout(errorTimer);
+    if (e) errorTimer = setTimeout(() => { $('msg').textContent = ''; }, 5000);
 }
 
 function errorText(status, data) {
@@ -95,6 +99,7 @@ function view(loggedIn) {
 function start() {
     view(true);
     $('who').textContent = localStorage.getItem(USER_KEY);
+    $('adminLink').hidden = JSON.parse(atob(localStorage.getItem(TOKEN_KEY).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).role !== 'Admin';
     refresh();
     clearInterval(timer);
     timer = setInterval(refresh, 2000);

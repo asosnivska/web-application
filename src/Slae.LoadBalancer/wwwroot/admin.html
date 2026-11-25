@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='uk'>
+<head>
+    <meta charset='utf-8'>
+    <title>СЛАР: адміністратор</title>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+    <h1>Панель адміністратора</h1>
+    <p id='msg'></p>
+    <p><a href='index.html'>До задач</a></p>
+
+    <h2>Сервери API</h2>
+    <table>
+        <thead><tr><th>Адреса</th><th>Стан</th><th>Усього запитів</th></tr></thead>
+        <tbody id='apis'></tbody>
+    </table>
+
+    <h2>Активні задачі</h2>
+    <table>
+        <thead><tr><th>Id</th><th>Користувач</th><th>N</th><th>Статус</th><th>Прогрес</th><th>Воркер</th></tr></thead>
+        <tbody id='tasks'></tbody>
+    </table>
+
+    <script src='admin.js'></script>
+</body>
+</html>

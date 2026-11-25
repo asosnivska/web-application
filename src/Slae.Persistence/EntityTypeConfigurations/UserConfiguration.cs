@@ -32,6 +32,8 @@ namespace Slae.Persistence.EntityTypeConfigurations
                 .IsUnique()
                 .HasDatabaseName("UX_Users_Username");
 
+            builder.Property(u => u.Role).HasMaxLength(20).HasDefaultValue("User");
+
             builder.Property(u => u.PasswordHash)
                 .IsRequired()
                 .HasMaxLength(256);
